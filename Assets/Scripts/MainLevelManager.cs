@@ -6,23 +6,34 @@ public class MainLevelManager : MonoBehaviour
 {    
     [SerializeField] private Rigidbody ball;
     [SerializeField] private Brick brickPrefab;
-    [SerializeField] private int lineCount = 6;
     [SerializeField] private Text scoreText;
-    [SerializeField] private GameObject GameOverText;
+    [SerializeField] private Text bestScoreText;
+    [SerializeField] private GameObject gameOverText;
+    [SerializeField] private int lineCount = 6;
 
     private bool isLevelStarted;
-    private float points;
     
+    private int currentScore;
+    private int bestScore;
+    private string bestPlayer;
+
 
     void Start()
-    {
+    {      
+        bestPlayer = PlayerPrefs.GetString("bestPlayer", null);
+        if (bestPlayer == "" || bestPlayer == null) 
+        {
+            bestPlayer = MainManager.Instance.CurrentPlayer;
+        }
+        bestScore = PlayerPrefs.GetInt("bestScore", 0);
+        DisplayBestScore();
+
         SpawnBricks();
-        
+
         ball.gameObject.SetActive(true);
         isLevelStarted = true;
-        MainManager.Instance.GameOver.AddListener(GameOver);
+        MainManager.Instance.GameOver.AddListener(GameOver);    
     }
-
 
     void Update()
     {
@@ -49,10 +60,16 @@ public class MainLevelManager : MonoBehaviour
         MainManager.Instance.GameOver.RemoveListener(GameOver);
     }
 
+
     private void AddPoint(int point)
     {
-        points += point;
-        scoreText.text = $"Score : {points}";
+        currentScore += point;
+        scoreText.text = $"Score : {currentScore}";
+    }
+
+    private void DisplayBestScore()
+    {
+        bestScoreText.text = $"Best score: {bestPlayer} - {bestScore}";
     }
 
     private void SpawnBricks()
@@ -78,7 +95,15 @@ public class MainLevelManager : MonoBehaviour
 
     private void GameOver()
     {
-        GameOverText.SetActive(true);
+        if(bestScore < currentScore)
+        {
+            bestPlayer = MainManager.Instance.CurrentPlayer;
+
+            PlayerPrefs.SetInt("bestScore", currentScore);
+            PlayerPrefs.SetString("bestPlayer", MainManager.Instance.CurrentPlayer);
+        }
+
+        gameOverText.SetActive(true);
         isLevelStarted = false;
     }
 }

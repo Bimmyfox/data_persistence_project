@@ -5,11 +5,14 @@ using UnityEngine.Events;
 
 public class MainManager : MonoBehaviour
 {
-    [SerializeField] private GameObject gameMenu;
-    [SerializeField] private TMP_InputField playerName;
     public static MainManager Instance;    
-    public bool IsGameOver {get; private set; }
-    public UnityEvent GameOver {get; set; }
+
+    [SerializeField] private GameObject gameMenu;
+    [SerializeField] private TMP_InputField currentPlayer;
+
+    public string CurrentPlayer { get; private set; }
+    public bool IsGameOver { get; private set; }
+    public UnityEvent GameOver { get; set; }
 
 
     void Start()
@@ -18,15 +21,15 @@ public class MainManager : MonoBehaviour
         {
             GameOver = new UnityEvent();
         }
-        
         GameOver.AddListener(EndGame);
+       
         IsGameOver = false;
-        
+
         if (Instance != null)
         {
             Destroy(gameObject);
             return;
-        }
+        }   
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -42,11 +45,14 @@ public class MainManager : MonoBehaviour
 
     public void StartLevel()
     {
-        if(playerName.text == "")
+        if(currentPlayer.text == "") 
         {
-            playerName.text = "Player";
+            CurrentPlayer = "Player";
+        } 
+        else 
+        {
+            CurrentPlayer = currentPlayer.text;
         }
-        Debug.Log(playerName.text);
         gameMenu.SetActive(false);
         SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }

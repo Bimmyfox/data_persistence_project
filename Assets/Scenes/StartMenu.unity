@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameMenu: {fileID: 330127049}
-  playerName: {fileID: 1433448478}
+  currentPlayer: {fileID: 1433448478}
 --- !u!1 &330127049
 GameObject:
   m_ObjectHideFlags: 0
